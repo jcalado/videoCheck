@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <h2 class="audio">🔊 Audio</h2>
+      <h3>Waveform</h3>
+      <img id="waveform" src="waveform.png" />
+      <script src="script.js"></script>
+
+      <h3>Silence</h3>
+      <div id="silences_progress" class="progress_bar" style="display: none;">
+        <div class="progress"></div>
+      </div>
+      <span id="silences_message" style="display: none;"></span>
+      <ul id="silences"></ul>
+    </div>
+
+    <div class="panel">
+      <h2 class="video">📺 Video</h2>
+      <h3>Black frames</h3>
+      <div id="empty_frames_progress" class="progress_bar" style="display: none;">
+        <div class="progress"></div>
+      </div>
+      <span id="blackness_message"></span>
+      <ul id="blackness"></ul>
+    </div>
+  </body>
+</html>

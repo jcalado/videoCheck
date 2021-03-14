@@ -1,0 +1,58 @@
+body {
+  font-family: system-ui;
+  margin: auto;
+  max-width: 70vw;
+  padding: 2rem;
+}
+
+.progress_bar {
+  width: 100%;
+  border-radius: 4px;
+}
+.progress {
+  height: 10px;
+  background: linear-gradient(
+90deg
+, #74a576, #80bf36);
+  border-radius: 4px;
+}
+
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px solid #dadada;
+  padding-bottom: 10px;
+  font-size: 1.5em;
+}
+
+h2 {
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: bolder;
+  margin-bottom: 2em;
+  padding: 5px;
+  border-radius: 4px;
+}
+h2.audio {
+  background: #8bc34a;
+}
+
+h2.video {
+  background: #4aadc3;
+}
+
+h3 {
+  margin-top: 2em;
+}
+
+html {
+  background: #F8F8F8;
+}
+
+.panel {
+  padding: 1.5em;
+  background: #f1f1f1;
+  border: 1px solid #dadada;
+  border-radius: 4px;
+  margin: 3em 0;
+}
