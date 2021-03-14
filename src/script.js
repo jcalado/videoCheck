@@ -1,4 +1,5 @@
 var ffmpeg = require("fluent-ffmpeg");
+var path = require("path");
 
 var silence_starts = [];
 var silence_ends = [];
@@ -59,6 +60,12 @@ function searchSilences(file) {
           secondsToHMS(silence_ends[i]);
         document.getElementById("silences").appendChild(el);
       }
+
+      if (silence_starts.length == 0) {
+        document.querySelector('#silences_title').innerText = 'OK';
+      }
+
+      document.getElementById("silences").scrollIntoView({block: "start", behavior: "smooth"});
     })
     .output("nul")
     .run();
@@ -68,7 +75,7 @@ function generateWaveform(file) {
   var proc = ffmpeg(file)
     .complexFilter([
       "[0:a]aformat=channel_layouts=mono, \
-  compand=gain=-6, \
+  compand=gain=4, \
   showwavespic=s=600x120:colors=#9cf42f[fg]; \
   color=s=600x120:color=#44582c, \
   drawgrid=width=iw/10:height=ih/5:color=#9cf42f@0.1[bg]; \
@@ -140,6 +147,12 @@ function searchBlackFrames(file) {
           secondsToHMS(black_starts[i]) + " - " + secondsToHMS(black_ends[i]);
         document.getElementById("blackness").appendChild(el);
       }
+
+      if (silence_starts.length == 0) {
+        document.querySelector('.panel:nth-child(4) h3').innerText = 'OK';
+      }
+
+      document.getElementById("blackness").scrollIntoView({block: "start", behavior: "smooth"});
     })
     .output("nul")
     .run();
@@ -147,9 +160,30 @@ function searchBlackFrames(file) {
 
 function getVideoMetadata(file) {
   console.log("Getting file metadata");
+
+  document.getElementById('fileName').innerText = path.basename(file);
+
   ffmpeg(file).ffprobe(function (err, data) {
-    console.log("file2 metadata:");
-    console.log(data.streams[0].codec_name);
+
+    data.streams.forEach(stream => {
+      if (stream.codec_type == 'video') {
+        document.getElementById('videoCodec').innerText = stream.codec_name;
+        document.getElementById('videoBitrate').innerText = Math.round(parseInt(stream.bit_rate/1000/1000) * 100) / 100 + " Mbps"
+        document.getElementById('videoWidth').innerText = stream.width;
+        document.getElementById('videoHeight').innerText = stream.height;
+        document.getElementById('videoFrameRate').innerText = stream.r_frame_rate;
+      }
+      if (stream.codec_type == 'audio') {
+        document.getElementById('audioCodec').innerText = stream.codec_name;
+        document.getElementById('audioBitrate').innerText = Math.round(parseInt(stream.bit_rate/1000) * 100) / 100 + " Kbps"
+        document.getElementById('audioSampleRate').innerText = stream.sample_rate;
+        document.getElementById('audioChannels').innerText = stream.channels;
+        document.getElementById('audioChannelLayout').innerText = stream.channel_layout;
+      }
+    });
+
+    console.log(data.streams);
+    console.log(data.streams[1].codec_name);
   });
 }
 
@@ -162,9 +196,11 @@ document.addEventListener("drop", (event) => {
   event.preventDefault();
   event.stopPropagation();
 
-  for (const f of event.dataTransfer.files) {
+  for (var f of event.dataTransfer.files) {
     // Using the path attribute to get absolute file path
     console.log("File Path of dragged files: ", f.path);
+    document.getElementById('drop').style.display = 'none';
+    document.querySelector('html').style.overflow = 'auto';
     getVideoMetadata(f.path);
     generateWaveform(f.path);
     searchBlackFrames(f.path);
@@ -179,6 +215,7 @@ document.addEventListener("dragover", (e) => {
 
 document.addEventListener("dragenter", (event) => {
   console.log("File is in the Drop Space");
+  document.getElementById('drop').style.display = 'flex';
 });
 
 document.addEventListener("dragleave", (event) => {

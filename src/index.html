@@ -2,17 +2,69 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
+    <title>VideoCheck</title>
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <div id="drop" style="display: flex;">
+      <span>Drop the file here</span>
+    </div>
+    <div class="panel">
+      <h2><span id="fileName"></span></h2>
+      <div id="meta">
+        <div class="metaPanel">
+          <div>
+            <span>Video Codec</span>
+            <span id="videoCodec"></span>
+          </div>
+          <div>
+            <span>Video Bitrate</span>
+            <span id="videoBitrate"></span>
+          </div>
+          <div>
+            <span>Width</span>
+            <span id="videoWidth"></span>
+          </div>
+          <div>
+            <span>Height</span>
+            <span id="videoHeight"></span>
+          </div>
+          <div>
+            <span>Frame Rate</span>
+            <span id="videoFrameRate"></span>
+          </div>
+        </div>
+        <div class="metaPanel">
+          <div>
+            <span>Audio Codec</span>
+            <span id="audioCodec"></span>
+          </div>
+          <div>
+            <span>Audio Bitrate</span>
+            <span id="audioBitrate"></span>
+          </div>
+          <div>
+            <span>Sample Rate</span>
+            <span id="audioSampleRate"></span>
+          </div>
+          <div>
+            <span>Channels</span>
+            <span id="audioChannels"></span>
+          </div>
+          <div>
+            <span>Channel Layout</span>
+            <span id="audioChannelLayout"></span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="panel">
       <h2 class="audio">🔊 Audio</h2>
       <h3>Waveform</h3>
       <img id="waveform" src="waveform.png" />
       <script src="script.js"></script>
 
-      <h3>Silence</h3>
+      <h3 id="silences_title">Extended Silences</h3>
       <div id="silences_progress" class="progress_bar" style="display: none;">
         <div class="progress"></div>
       </div>
