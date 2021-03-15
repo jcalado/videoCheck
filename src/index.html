@@ -6,8 +6,10 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div id="drop" style="display: flex;">
-      <span onclick="ipcRenderer.send('click-button','true')">📁 Drop the file or click here</span>
+    <div id="drop" style="display: flex">
+      <span onclick="ipcRenderer.send('click-button','true')"
+        >📁 Drop the file or click here</span
+      >
     </div>
     <div class="panel">
       <h2 class="ms-fontSize-28"><span id="fileName"></span></h2>
@@ -78,21 +80,25 @@
         <span id="waveformProgress"></span>
         <img id="waveformImage" src="placeholder.png" />
       </div>
-      
+
       <script src="script.js"></script>
 
       <h3 id="silences_title">Extended Silences</h3>
-      <div id="silences_progress" class="progress_bar" style="display: none;">
-        <span id="silences_message" style="display: none;"></span>
+      <div id="silences_progress" class="progress_bar" style="display: none">
+        <span id="silences_message" style="display: none"></span>
         <div class="progress"></div>
       </div>
-      
+
       <ul id="silences"></ul>
     </div>
     <div class="panel">
       <h2 class="video">📺 Video</h2>
       <h3>Black frames</h3>
-      <div id="empty_frames_progress" class="progress_bar" style="display: none;">
+      <div
+        id="empty_frames_progress"
+        class="progress_bar"
+        style="display: none"
+      >
         <span id="blackness_message"></span>
         <div class="progress"></div>
       </div>

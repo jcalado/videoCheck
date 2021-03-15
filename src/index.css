@@ -19,6 +19,7 @@ body {
 .progress {
   height: 30px;
   background: #30a9a3;
+  transition: 0.8s linear all;
 }
 
 .progress_bar span {
@@ -160,6 +161,7 @@ span#waveformProgress {
 .metaPanel div span:first-child {
   flex: 2;
   font-weight: bold;
+  margin-right: 10px;
 }
 
 .metaPanel div span:nth-child(2) {
@@ -173,13 +175,13 @@ ul {
 }
 
 li {
-  display: inline;
+  display: inline-block;
   padding: 5px 10px;
   background: #e3003f;
   color: white;
   font-weight: bold;
   border-radius: 20px;
-  margin-right: 10px;
+  margin: 3px;
 }
 
 
@@ -196,4 +198,14 @@ li {
 .metaPanel:nth-child(3) {
   background: var(--audio-color);
   padding: 10px;
+}
+
+span.success {
+  background-color: var(--audio-color);
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 0px 20px;
+  border-bottom: 1px solid #629e1d;
+  border-radius: 6px;
+  margin: 0px 10px;
 }

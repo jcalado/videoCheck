@@ -22,7 +22,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // No menu
   mainWindow.removeMenu();
@@ -36,8 +36,7 @@ const createWindow = () => {
         {name: 'Audios', extensions: ['mp3','m4a','wav']}
       ]
     }).then(result => {
-      console.log(result.canceled)
-      console.log(result.filePaths)
+      //console.log(result.canceled)
       event.sender.send('open-file', result.filePaths[0]);
     }).catch(err => {
       console.log(err)

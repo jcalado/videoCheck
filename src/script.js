@@ -1,7 +1,6 @@
 var ffmpeg = require("fluent-ffmpeg");
 var path = require("path");
-const {ipcRenderer} = require('electron')
-
+const { ipcRenderer } = require("electron");
 
 var silence_starts = [];
 var silence_ends = [];
@@ -22,7 +21,6 @@ function searchSilences(file) {
     })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
       document.getElementById("silences_message").innerText =
@@ -48,8 +46,6 @@ function searchSilences(file) {
       }
     })
     .on("end", function () {
-      console.log("Finished processing");
-
       document.getElementById("silences_progress").style.display = "none";
       document.getElementById("silences_message").style.display = "none";
 
@@ -58,19 +54,31 @@ function searchSilences(file) {
         el.innerHTML =
           secondsToHMS(silence_starts[i]) +
           " - " +
-          secondsToHMS(silence_ends[i]) + 
-          ' (' + secondsToHMS(silence_ends[i] - silence_starts[i])   + ')';
+          secondsToHMS(silence_ends[i]) +
+          " (" +
+          secondsToHMS(silence_ends[i] - silence_starts[i]) +
+          ")";
         document.getElementById("silences").appendChild(el);
       }
 
-      if (silence_starts.length == 0) {
-        document.querySelector('#silences_title').innerText = 'OK';
+      if (silence_starts.length === 0) {
+        triggerOKFor(document.querySelector("#silences_title"));
       }
 
-      document.getElementById("silences").scrollIntoView({block: "start", behavior: "smooth"});
+      document
+        .getElementById("silences")
+        .scrollIntoView({ block: "start", behavior: "smooth" });
     })
     .output("nul")
     .run();
+}
+
+function triggerOKFor(element) {
+  var silence_success_tag = document.createElement('span');
+  silence_success_tag.className = 'success';
+  silence_success_tag.innerText = 'OK';
+
+  element.insertAdjacentElement('afterend', silence_success_tag);
 }
 
 function generateWaveform(file) {
@@ -83,23 +91,20 @@ function generateWaveform(file) {
   drawgrid=width=iw/10:height=ih/5:color=#9cf42f@0.1[bg]; \
   [bg][fg]overlay=format=auto,drawbox=x=(iw-w)/2:y=(ih-h)/2:w=iw:h=1:color=#9cf42f",
     ])
-    .on("start", function(cmdline) {
-      document.getElementById('waveformProgress').style.display = 'block';
-      document.getElementById('waveformProgress').innerText = "LOADING";
+    .on("start", function (cmdline) {
+      document.getElementById("waveformProgress").style.display = "block";
+      document.getElementById("waveformProgress").innerText = "LOADING";
     })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
-      console.log(progress)
-      
       //document.getElementById('waveformProgress').innerText = progress.percent * 100 + "%";
     })
     .on("end", function () {
       document.getElementById("waveformImage").src =
         "waveform.png?" + new Date().getTime();
-      document.getElementById('waveformProgress').style.display = 'none';
+      document.getElementById("waveformProgress").style.display = "none";
     })
     .outputOptions(["-vframes 1"])
     .save("src/waveform.png");
@@ -119,12 +124,11 @@ function searchBlackFrames(file) {
     })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
       document.getElementById("blackness_message").innerText =
         Math.round(progress.percent * 100) / 100 + "%";
-      console.log("Processing: " + progress.percent + "% done");
+
       document
         .getElementById("empty_frames_progress")
         .querySelector(".progress").style.width =
@@ -135,14 +139,11 @@ function searchBlackFrames(file) {
       var found_s = line.match(re_s);
 
       if (found_s != null) {
-        console.log(found_s);
         black_starts.push(parseInt(found_s[1]));
         black_ends.push(parseInt(found_s[2]));
-        console.log(line);
       }
     })
     .on("end", function () {
-      console.log("Finished processing");
 
       document.getElementById("empty_frames_progress").style.display = "none";
       document.getElementById("blackness_message").style.display = "none";
@@ -154,42 +155,51 @@ function searchBlackFrames(file) {
         document.getElementById("blackness").appendChild(el);
       }
 
-      if (silence_starts.length == 0) {
-        document.querySelector('.panel:nth-child(4) h3').innerText = 'OK';
+      if (black_starts.length === 0) {
+        triggerOKFor(document.querySelector(".panel:nth-child(4) h3"))
       }
 
-      document.getElementById("blackness").scrollIntoView({block: "start", behavior: "smooth"});
+      document
+        .getElementById("blackness")
+        .scrollIntoView({ block: "start", behavior: "smooth" });
     })
     .output("nul")
     .run();
 }
 
 function getVideoMetadata(file) {
-  console.log("Getting file metadata");
-
-  document.getElementById('fileName').innerText = path.basename(file);
+  document.getElementById("fileName").innerText = path.basename(file);
 
   ffmpeg(file).ffprobe(function (err, data) {
-    console.log(data)
-    data.streams.forEach(stream => {
-      if (stream.codec_type == 'video') {
-        document.getElementById('videoCodec').innerText = stream.codec_long_name;
-        document.getElementById('videoCodecProfile').innerText = stream.profile;
-        document.getElementById('videoBitrate').innerText = Math.round(parseInt(stream.bit_rate/1000/1000) * 100) / 100 + " Mbps"
-        document.getElementById('videoResolution').innerText = stream.width + "x" + stream.height;
-        document.getElementById('videoFrameRate').innerText = stream.r_frame_rate;
-        document.getElementById('videoFieldOrder').innerText = stream.field_order;
-        document.getElementById('mediaDuration').innerText = secondsToHMS(parseInt(stream.duration));
+    data.streams.forEach((stream) => {
+      if (stream.codec_type == "video") {
+        document.getElementById("videoCodec").innerText =
+          stream.codec_long_name;
+        document.getElementById("videoCodecProfile").innerText = stream.profile;
+        document.getElementById("videoBitrate").innerText =
+          Math.round(parseInt(stream.bit_rate / 1000 / 1000) * 100) / 100 +
+          " Mbps";
+        document.getElementById("videoResolution").innerText =
+          stream.width + "x" + stream.height;
+        document.getElementById("videoFrameRate").innerText =
+          stream.r_frame_rate;
+        document.getElementById("videoFieldOrder").innerText =
+          stream.field_order;
+        document.getElementById("mediaDuration").innerText = secondsToHMS(
+          parseInt(stream.duration)
+        );
       }
-      if (stream.codec_type == 'audio') {
-        document.getElementById('audioCodec').innerText = stream.codec_name;
-        document.getElementById('audioBitrate').innerText = Math.round(parseInt(stream.bit_rate/1000) * 100) / 100 + " Kbps"
-        document.getElementById('audioSampleRate').innerText = stream.sample_rate;
-        document.getElementById('audioChannels').innerText = stream.channels;
-        document.getElementById('audioChannelLayout').innerText = stream.channel_layout;
+      if (stream.codec_type == "audio") {
+        document.getElementById("audioCodec").innerText = stream.codec_name;
+        document.getElementById("audioBitrate").innerText =
+          Math.round(parseInt(stream.bit_rate / 1000) * 100) / 100 + " Kbps";
+        document.getElementById("audioSampleRate").innerText =
+          stream.sample_rate;
+        document.getElementById("audioChannels").innerText = stream.channels;
+        document.getElementById("audioChannelLayout").innerText =
+          stream.channel_layout;
       }
     });
-
   });
 }
 
@@ -202,10 +212,8 @@ document.addEventListener("drop", (event) => {
   event.stopPropagation();
 
   for (var f of event.dataTransfer.files) {
-    // Using the path attribute to get absolute file path
-    console.log("File Path of dragged files: ", f.path);
-    document.getElementById('drop').style.display = 'none';
-    document.querySelector('html').style.overflow = 'auto';
+    hideDropZone();
+
     getVideoMetadata(f.path);
     generateWaveform(f.path);
     searchBlackFrames(f.path);
@@ -219,20 +227,31 @@ document.addEventListener("dragover", (e) => {
 });
 
 document.addEventListener("dragenter", (event) => {
-  console.log("File is in the Drop Space");
-  document.getElementById('drop').style.display = 'flex';
+  showDropZone();
 });
 
 document.addEventListener("dragleave", (event) => {
-  console.log("File has left the Drop Space");
 });
 
-
-ipcRenderer.on('open-file', (event, arg) => {
-  document.getElementById('drop').style.display = 'none';
-  document.querySelector('html').style.overflow = 'auto';
+ipcRenderer.on("open-file", (event, arg) => {
+  hideDropZone();
   getVideoMetadata(arg);
   generateWaveform(arg);
   searchBlackFrames(arg);
   searchSilences(arg);
 });
+
+function showDropZone() {
+  document.getElementById("drop").style.display = "flex";
+  document.querySelector("html").style.overflow = "hidden";
+
+  document.querySelectorAll(".success").forEach((success) => {
+    success.remove();
+  });
+}
+
+function hideDropZone() {
+  document.getElementById("drop").style.display = "none";
+  document.querySelector("html").style.overflow = "auto";
+}
+
