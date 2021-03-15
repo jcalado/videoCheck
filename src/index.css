@@ -1,20 +1,34 @@
+:root {
+  --video-color: #4aadc3;
+  --audio-color: #8bc34a;
+}
+
+
 body {
   font-family: system-ui;
   margin: auto;
-  max-width: 70vw;
-  padding: 2rem;
+  /* max-width: 70vw; */
+  /* padding: 1rem; */
 }
 
 .progress_bar {
   width: 100%;
-  border-radius: 4px;
+  position: relative;
+  background: #484848;
 }
 .progress {
-  height: 10px;
-  background: linear-gradient(
-90deg
-, #74a576, #80bf36);
-  border-radius: 4px;
+  height: 30px;
+  background: #30a9a3;
+}
+
+.progress_bar span {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  line-height: 30px;
+  font-size: 23px;
+  color:white;
 }
 
 h1 {
@@ -26,6 +40,7 @@ h1 {
 }
 
 h2 {
+  margin: 0;
   text-align: left;
   text-transform: uppercase;
   font-weight: bolder;
@@ -33,17 +48,22 @@ h2 {
   border-radius: 4px;
 }
 h2.audio {
-  background: #8bc34a;
-  padding: 5px;
+  color: var(--audio-color);
 }
 
 h2.video {
-  background: #4aadc3;
-  padding: 5px;
+  color: var(--video-color);
 }
 
 h3 {
+  margin: 0;
+  margin-bottom: 1em;
+  font-size: 1.3em;
   margin-top: 2em;
+  border-bottom: 1px solid #d0d0d0;
+  display: inline-block;
+  padding: 0px 20px;
+  background: #e2e2e2;
 }
 
 html {
@@ -52,11 +72,13 @@ html {
 }
 
 .panel {
-  padding: 1em;
+  /* padding: 0.5em; */
   background: #f1f1f1;
-  border: 1px solid #dadada;
-  border-radius: 4px;
-  margin-bottom: 1em;
+  /* border: 1px solid #dadada; */
+  /* border-radius: 4px; */
+  padding: 2em;
+  width: calc(100% - 4em);
+  border-bottom: 2px solid #d0d0d0;
 }
 
 #drop {
@@ -69,6 +91,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 
 #drop span {
@@ -76,25 +99,56 @@ html {
   border-radius: 10px;
   font-weight: bold;
   font-size: 1.4em;
-  background-color: #595959;
-  border: 3px solid #818181;
+  background-color: #156986;
+  border: 1px solid #9beae9;
   color: white;
   text-transform: uppercase;
-  box-shadow: 0px 0px 30px #ffffff;
+  box-shadow: 0px 0px 10px 5px #79ced6, 0px 0px 50px #005998;
+  transition: 0.2s cubic-bezier(0.22, 0.61, 0.36, 1) all;
+  text-shadow: 0px 2px #3a3a3a;
 }
 
 #drop span:hover {
-  background: rgb(0, 124, 72);
+  background: #3299bd;
+  transform: scale(1.03);
+  border: 1px solid #21dbe0;
+  box-shadow: 0px 0px 40px #696969;
 }
 
 #meta {
   display: flex;
 }
 
+#waveform {
+  max-width: 100%;
+  position:relative;
+}
+
+span#waveformProgress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 120px;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+}
+
 .metaPanel {
   display: flex;
   flex-direction: column;
   flex: 1;
+  flex-basis: auto;
+  margin: 5px;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+.metaPanel h4 {
+  margin: 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #1b1b1b;
 }
 
 .metaPanel > div {
@@ -109,5 +163,37 @@ html {
 }
 
 .metaPanel div span:nth-child(2) {
-  flex: 4;
+  flex: 6;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: inline;
+  padding: 5px 10px;
+  background: #e3003f;
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+
+.metaPanel:nth-child(1) {
+  padding: 10px;
+  background: #d8d8d8;
+}
+
+.metaPanel:nth-child(2) {
+  background: var(--video-color);
+  padding: 10px;
+}
+
+.metaPanel:nth-child(3) {
+  background: var(--audio-color);
+  padding: 10px;
 }

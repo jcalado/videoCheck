@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -9,8 +9,8 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 900,
+    width: 1100,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -22,9 +22,28 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
+  // No menu
   mainWindow.removeMenu();
+
+  ipcMain.on('click-button',(event,arg)=>{
+
+    dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: [
+        {name: 'Videos', extensions: ['mkv','mov','mp4','avi']},
+        {name: 'Audios', extensions: ['mp3','m4a','wav']}
+      ]
+    }).then(result => {
+      console.log(result.canceled)
+      console.log(result.filePaths)
+      event.sender.send('open-file', result.filePaths[0]);
+    }).catch(err => {
+      console.log(err)
+    })
+  
+  })
 };
 
 // This method will be called when Electron has finished
@@ -51,3 +70,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+

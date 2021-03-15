@@ -1,5 +1,7 @@
 var ffmpeg = require("fluent-ffmpeg");
 var path = require("path");
+const {ipcRenderer} = require('electron')
+
 
 var silence_starts = [];
 var silence_ends = [];
@@ -11,7 +13,7 @@ function searchSilences(file) {
   silence_ends = [];
 
   var proc2 = ffmpeg(file)
-    .audioFilters("silencedetect=n=-30dB:d=3")
+    .audioFilters("silencedetect=n=-35dB:d=3")
     .format("null")
     .on("start", function (cmdline) {
       document.getElementById("silences").innerHTML = "";
@@ -20,7 +22,6 @@ function searchSilences(file) {
     })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg output:\n" + stdout);
       console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
@@ -57,7 +58,8 @@ function searchSilences(file) {
         el.innerHTML =
           secondsToHMS(silence_starts[i]) +
           " - " +
-          secondsToHMS(silence_ends[i]);
+          secondsToHMS(silence_ends[i]) + 
+          ' (' + secondsToHMS(silence_ends[i] - silence_starts[i])   + ')';
         document.getElementById("silences").appendChild(el);
       }
 
@@ -76,23 +78,28 @@ function generateWaveform(file) {
     .complexFilter([
       "[0:a]aformat=channel_layouts=mono, \
   compand=gain=4, \
-  showwavespic=s=600x120:colors=#9cf42f[fg]; \
-  color=s=600x120:color=#44582c, \
+  showwavespic=s=1000x120:colors=#9cf42f[fg]; \
+  color=s=1000x120:color=#44582c, \
   drawgrid=width=iw/10:height=ih/5:color=#9cf42f@0.1[bg]; \
   [bg][fg]overlay=format=auto,drawbox=x=(iw-w)/2:y=(ih-h)/2:w=iw:h=1:color=#9cf42f",
     ])
-    .on("start", (cmdline) => console.log(cmdline))
+    .on("start", function(cmdline) {
+      document.getElementById('waveformProgress').style.display = 'block';
+      document.getElementById('waveformProgress').innerText = "LOADING";
+    })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg output:\n" + stdout);
       console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
-      console.log("Processing: " + progress.percent + "% done");
+      console.log(progress)
+      
+      //document.getElementById('waveformProgress').innerText = progress.percent * 100 + "%";
     })
     .on("end", function () {
-      document.getElementById("waveform").src =
+      document.getElementById("waveformImage").src =
         "waveform.png?" + new Date().getTime();
+      document.getElementById('waveformProgress').style.display = 'none';
     })
     .outputOptions(["-vframes 1"])
     .save("src/waveform.png");
@@ -103,7 +110,7 @@ function searchBlackFrames(file) {
   black_ends = [];
 
   var proc3 = ffmpeg(file)
-    .videoFilters("blackdetect=d=3:pic_th=0.9")
+    .videoFilters("blackdetect=d=3:pic_th=0.8")
     .format("null")
     .on("start", function (cmdline) {
       document.getElementById("blackness").innerHTML = "";
@@ -112,7 +119,6 @@ function searchBlackFrames(file) {
     })
     .on("error", function (err, stdout, stderr) {
       console.log("Error: " + err.message);
-      console.log("ffmpeg output:\n" + stdout);
       console.log("ffmpeg stderr:\n" + stderr);
     })
     .on("progress", function (progress) {
@@ -164,14 +170,16 @@ function getVideoMetadata(file) {
   document.getElementById('fileName').innerText = path.basename(file);
 
   ffmpeg(file).ffprobe(function (err, data) {
-
+    console.log(data)
     data.streams.forEach(stream => {
       if (stream.codec_type == 'video') {
-        document.getElementById('videoCodec').innerText = stream.codec_name;
+        document.getElementById('videoCodec').innerText = stream.codec_long_name;
+        document.getElementById('videoCodecProfile').innerText = stream.profile;
         document.getElementById('videoBitrate').innerText = Math.round(parseInt(stream.bit_rate/1000/1000) * 100) / 100 + " Mbps"
-        document.getElementById('videoWidth').innerText = stream.width;
-        document.getElementById('videoHeight').innerText = stream.height;
+        document.getElementById('videoResolution').innerText = stream.width + "x" + stream.height;
         document.getElementById('videoFrameRate').innerText = stream.r_frame_rate;
+        document.getElementById('videoFieldOrder').innerText = stream.field_order;
+        document.getElementById('mediaDuration').innerText = secondsToHMS(parseInt(stream.duration));
       }
       if (stream.codec_type == 'audio') {
         document.getElementById('audioCodec').innerText = stream.codec_name;
@@ -182,13 +190,10 @@ function getVideoMetadata(file) {
       }
     });
 
-    console.log(data.streams);
-    console.log(data.streams[1].codec_name);
   });
 }
 
 function secondsToHMS(seconds) {
-  console.log(seconds);
   return new Date(seconds * 1000).toISOString().substr(11, 8);
 }
 
@@ -220,4 +225,14 @@ document.addEventListener("dragenter", (event) => {
 
 document.addEventListener("dragleave", (event) => {
   console.log("File has left the Drop Space");
+});
+
+
+ipcRenderer.on('open-file', (event, arg) => {
+  document.getElementById('drop').style.display = 'none';
+  document.querySelector('html').style.overflow = 'auto';
+  getVideoMetadata(arg);
+  generateWaveform(arg);
+  searchBlackFrames(arg);
+  searchSilences(arg);
 });

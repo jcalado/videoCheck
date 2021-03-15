@@ -7,40 +7,53 @@
   </head>
   <body>
     <div id="drop" style="display: flex;">
-      <span>Drop the file here</span>
+      <span onclick="ipcRenderer.send('click-button','true')">📁 Drop the file or click here</span>
     </div>
     <div class="panel">
-      <h2><span id="fileName"></span></h2>
+      <h2 class="ms-fontSize-28"><span id="fileName"></span></h2>
       <div id="meta">
         <div class="metaPanel">
+          <h4>Media</h4>
           <div>
-            <span>Video Codec</span>
-            <span id="videoCodec"></span>
-          </div>
-          <div>
-            <span>Video Bitrate</span>
-            <span id="videoBitrate"></span>
-          </div>
-          <div>
-            <span>Width</span>
-            <span id="videoWidth"></span>
-          </div>
-          <div>
-            <span>Height</span>
-            <span id="videoHeight"></span>
-          </div>
-          <div>
-            <span>Frame Rate</span>
-            <span id="videoFrameRate"></span>
+            <span>Duration</span>
+            <span id="mediaDuration"></span>
           </div>
         </div>
         <div class="metaPanel">
+          <h4>Video</h4>
           <div>
-            <span>Audio Codec</span>
+            <span>Codec</span>
+            <span id="videoCodec"></span>
+          </div>
+          <div>
+            <span>Profile</span>
+            <span id="videoCodecProfile"></span>
+          </div>
+          <div>
+            <span>Bitrate</span>
+            <span id="videoBitrate"></span>
+          </div>
+          <div>
+            <span>Resolution</span>
+            <span id="videoResolution"></span>
+          </div>
+          <div>
+            <span>FPS</span>
+            <span id="videoFrameRate"></span>
+          </div>
+          <div>
+            <span>Field order</span>
+            <span id="videoFieldOrder"></span>
+          </div>
+        </div>
+        <div class="metaPanel">
+          <h4>Audio</h4>
+          <div>
+            <span>Codec</span>
             <span id="audioCodec"></span>
           </div>
           <div>
-            <span>Audio Bitrate</span>
+            <span>Bitrate</span>
             <span id="audioBitrate"></span>
           </div>
           <div>
@@ -52,7 +65,7 @@
             <span id="audioChannels"></span>
           </div>
           <div>
-            <span>Channel Layout</span>
+            <span>Layout</span>
             <span id="audioChannelLayout"></span>
           </div>
         </div>
@@ -61,24 +74,28 @@
     <div class="panel">
       <h2 class="audio">🔊 Audio</h2>
       <h3>Waveform</h3>
-      <img id="waveform" src="waveform.png" />
+      <div id="waveform">
+        <span id="waveformProgress"></span>
+        <img id="waveformImage" src="placeholder.png" />
+      </div>
+      
       <script src="script.js"></script>
 
       <h3 id="silences_title">Extended Silences</h3>
       <div id="silences_progress" class="progress_bar" style="display: none;">
+        <span id="silences_message" style="display: none;"></span>
         <div class="progress"></div>
       </div>
-      <span id="silences_message" style="display: none;"></span>
+      
       <ul id="silences"></ul>
     </div>
-
     <div class="panel">
       <h2 class="video">📺 Video</h2>
       <h3>Black frames</h3>
       <div id="empty_frames_progress" class="progress_bar" style="display: none;">
+        <span id="blackness_message"></span>
         <div class="progress"></div>
       </div>
-      <span id="blackness_message"></span>
       <ul id="blackness"></ul>
     </div>
   </body>
