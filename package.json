@@ -50,9 +50,9 @@
           "config": {
             "repository": {
               "owner": "jcalado",
-              "name": "videoCheck",
-              "draft": true
-            }
+              "name": "videoCheck"
+            },
+            "draft": true
           }
         }
       ]
