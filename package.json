@@ -1,7 +1,7 @@
 {
   "name": "videointegrity",
   "productName": "videointegrity",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Check video files for empty frames or missing audio",
   "main": "src/index.js",
   "scripts": {
