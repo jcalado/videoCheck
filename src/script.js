@@ -6,6 +6,17 @@ var silence_starts = [];
 var silence_ends = [];
 var black_starts = [];
 var black_ends = [];
+var appDataPath = '';
+waveformPath = '';
+
+
+ipcRenderer.send('getAppDataPath');
+ipcRenderer.on('setAppDataPath', (event, arg) => {
+  appDataPath = arg;
+  console.log(appDataPath);
+  waveformPath = path.join(appDataPath, 'waveform.png')
+  console.log(waveformPath);
+})
 
 function searchSilences(file) {
   silence_starts = [];
@@ -103,11 +114,11 @@ function generateWaveform(file) {
     })
     .on("end", function () {
       document.getElementById("waveformImage").src =
-        "waveform.png?" + new Date().getTime();
+        waveformPath + "?" + new Date().getTime();
       document.getElementById("waveformProgress").style.display = "none";
     })
     .outputOptions(["-vframes 1"])
-    .save("src/waveform.png");
+    .save(path.join(appDataPath, 'waveform.png'));
 }
 
 function searchBlackFrames(file) {

@@ -1,10 +1,15 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, ipcRenderer } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
+ipcMain.on('getAppDataPath', (event) => {
+  var path = app.getAppPath();
+  event.reply('setAppDataPath', path);
+})
 
 const createWindow = () => {
   // Create the browser window.
