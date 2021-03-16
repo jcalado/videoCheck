@@ -38,8 +38,11 @@ const createWindow = () => {
         {name: 'Audios', extensions: ['mp3','m4a','wav']}
       ]
     }).then(result => {
-      //console.log(result.canceled)
-      event.sender.send('open-file', result.filePaths[0]);
+      if (result.canceled) {
+        console.log("User canceled open file action");
+      } else {
+        event.sender.send('open-file', result.filePaths[0]);
+      }      
     }).catch(err => {
       console.log(err)
     })
