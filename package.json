@@ -1,7 +1,7 @@
 {
-  "name": "videointegrity",
-  "productName": "videointegrity",
-  "version": "0.2.1",
+  "name": "videoCheck",
+  "productName": "videoCheck",
+  "version": "0.2.3",
   "description": "Check video files for empty frames or missing audio",
   "main": "src/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "videointegrity"
+            "name": "videoCheck"
           }
         },
         {

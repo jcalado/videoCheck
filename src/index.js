@@ -1,10 +1,15 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, ipcRenderer } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
+ipcMain.on('getAppDataPath', (event) => {
+  var path = app.getAppPath();
+  event.reply('setAppDataPath', path);
+})
 
 const createWindow = () => {
   // Create the browser window.
@@ -22,8 +27,10 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  } 
+  
   // No menu
   mainWindow.removeMenu();
 
@@ -36,8 +43,11 @@ const createWindow = () => {
         {name: 'Audios', extensions: ['mp3','m4a','wav']}
       ]
     }).then(result => {
-      //console.log(result.canceled)
-      event.sender.send('open-file', result.filePaths[0]);
+      if (result.canceled) {
+        console.log("User canceled open file action");
+      } else {
+        event.sender.send('open-file', result.filePaths[0]);
+      }      
     }).catch(err => {
       console.log(err)
     })
