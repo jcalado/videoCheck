@@ -22,8 +22,10 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  } 
+  
   // No menu
   mainWindow.removeMenu();
 
